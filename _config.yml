@@ -1,5 +1,7 @@
 title: peders1n1.sh
 description: Red Team Ops and Walkthroughs.
+baseurl: ""
+url: "https://peders1n1.github.io"
 show_downloads: true
 google_analytics:
 theme: jekyll-theme-hacker
