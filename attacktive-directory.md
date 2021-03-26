@@ -3,7 +3,7 @@ layout: default
 ---
 # Attacktive Directory - 2021
 
-- ### Kerberos abusing
+- ### Kerberos abuse
 - ### Brute force in Hash
 - ### Pass The Hash
 
@@ -31,7 +31,7 @@ Primeiro vamos enviar um usuario que provavelmente não existe no dominio como p
 
 ![Wireshark-1](./images/walkthroughs/attacktive-directory/img.attacktive-3.png)
 
-Após realizar query, notamos que o protocolo responsavel pelo Kerberus é o KRB5 na porta 88 UDP, então ele envia uma flag "AS-REQ" e o servidor responde com "KRB:Error KRB5KDC_ERR_C_PRINCIPAL_UNKNOM" porque o usuario não existe no dominio.
+Após realizar a query, notamos que o protocolo responsavel pelo Kerberus é o KRB5 na porta 88 UDP, então ele envia uma flag "AS-REQ" e o servidor responde com "KRB:Error KRB5KDC_ERR_C_PRINCIPAL_UNKNOM" porque o usuario não existe no dominio.
 
 Vamos fazer uma query agora com um usuario valido para verificarmos se o protocolo se comporta de forma diferente.
 Para isso, vou utilizar um usuario padrão que na maioria das vezes fica ativo no dominio, o "administrator".
@@ -39,7 +39,6 @@ Para isso, vou utilizar um usuario padrão que na maioria das vezes fica ativo n
 ![Wireshark-2](./images/walkthroughs/attacktive-directory/img.attacktive-4.png)
 
 E boom! O protocolo se comporta de forma diferente, respondendo com a flag "KRB:Error KRB5KDC_ERR_PREAUTH_REQUIRED" informando que o usuario é valido mas necessita se autenticar.
-Caso o sysadmin configure de forma incorreta um usuario no servidor, será possivel além de fazer a enumeração do usuario, conseguir o ticket do mesmo para ser quebrado posteriormente.
 
 Sendo assim, após realizar a PoC notamos que sim, é possivel realizar ataques de enumeração de usuarios apartir do protocolo em questão, então bora hackear!
 
@@ -53,9 +52,9 @@ kerbrute userenum --dc attacktive.thm -d spookysec.local userlist.txt | tee kerb
 
 ![Kerbrute](./images/walkthroughs/attacktive-directory/img.attacktive-5.png)
 
-Notamos que a ferramente nos trouxe diversos usuarios validos e um hash do usuario svc-admin, esse usuario não necessita se autenticar atraves do kerberos, sendo uma falha muito grave de segurança ainda mais para um "admin"
+Notamos que a ferramenta nos trouxe diversos usuarios validos e um hash do usuario svc-admin, esse usuario não necessita se autenticar atraves do kerberos, sendo uma falha muito grave de segurança ainda mais para um "admin"
 
-Vamos quebrar o hash dele, mas antes precisamos pesquisar qual é o tipo do hash em questão, para isso vou utilizar a WiKi do Hashcat https://hashcat.net/wiki/doku.php?id=example_hashes e pesquisar na pagina o SALT do hash "$krb5asrep$18$" após isso validamos que o ID do hash (na ferramenta do hashcat) é o "18200" e o nome é "Kerberos 5 AS-REP etype 23"
+Vamos quebrar o hash dele, mas antes precisamos pesquisar qual é o tipo do hash em questão, para isso vou utilizar a WiKi do Hashcat https://hashcat.net/wiki/doku.php?id=example_hashes e pesquisar na pagina o SALT do hash "$krb5asrep$" após isso validamos que o ID do hash (na ferramenta do hashcat) é o "18200" e o nome é "Kerberos 5 AS-REP etype 23"
 
 ![Hashcat-1](./images/walkthroughs/attacktive-directory/img.attacktive-6.png)
 
@@ -97,7 +96,9 @@ Agora que conseguimos as credenciais do usuario backup, conseguimos realizar um 
 
 Então partiu Hackear!
 
-Para isso, vamos utilizar o secretsdump, uma ferramente que faz parte do impacket (https://github.com/SecureAuthCorp/impacket) que faz um dump (coleta) de todos os hashes remotamente (isso é jogo baixo!).
+Para isso, vamos utilizar o secretsdump, uma ferramenta
+
+que faz parte do impacket (https://github.com/SecureAuthCorp/impacket) que faz um dump (coleta) de todos os hashes remotamente (isso é jogo baixo!).
 
 ```sh
 secretsdump.py spookysec.local/backup:backup2517860@spookysec.local
@@ -107,7 +108,7 @@ secretsdump.py spookysec.local/backup:backup2517860@spookysec.local
 
 Agora que coletamos o hash do "administrator" temos duas opções, ou realizar a quebrar do hash NTLM utilizando alguma ferramenta de quebras de senha, como o hashcat, john.. 
 
-Tamém podemos se conectar no servidor remotamente utilizando a tecnica "Pass The Hash", sendo assim, em vez de utilizar uma senha, iremos passar o hash para se autenticar no servidor, então não precisamos quebrar a senha do usuario, basta nos conectarmos e se quisermos, trocar a senha localmente
+Também podemos se conectar no servidor remotamente utilizando a tecnica "Pass The Hash", sendo assim, em vez de utilizar uma senha, iremos passar o hash para se autenticar no servidor, então não precisamos quebrar a senha do usuario, basta nos conectarmos e se quisermos, trocar a senha localmente
 
 Vou utilizar a ferramenta chamada Evil-WinRM (https://github.com/Hackplayers/evil-winrm) que permite o uso da tecnica "Pass The Hash"
 
@@ -143,6 +144,6 @@ xfreerdp /u:administrator /v:10.10.60.231
 
 ![RDP](./images/walkthroughs/attacktive-directory/img.attacktive-13.png)
 
-***Espero que tenha gostado!***
+***Espero que tenham gostado!***
 
 ***Partiu Hackear!***
