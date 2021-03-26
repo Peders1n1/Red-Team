@@ -13,7 +13,7 @@ Come√ßo realizando um scan com o nmap para validar as portas abertas e os servi√
 ```sh
 sudo nmap -sV -sC -T4 -Pn attacktive.thm -v -oN nmap.scan
 ```
-Percebemos que se trada de um Windows Server com o mome do dominio ***spookysec.local***
+Percebemos que se trata de um Windows Server com o mome do dominio ***spookysec.local***
 
 ![Scan nmap](./images/walkthroughs/attacktive-directory/img.attacktive-2.png)
 
