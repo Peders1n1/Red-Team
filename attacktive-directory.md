@@ -31,7 +31,7 @@ Primeiro vamos enviar um usuario que provavelmente não existe no dominio como p
 
 ![Wireshark-1](./images/walkthroughs/attacktive-directory/img.attacktive-3.png)
 
-Após realizar a query, notamos que o protocolo responsavel pelo Kerberus é o KRB5 na porta 88 UDP, então ele envia uma flag "AS-REQ" e o servidor responde com "KRB:Error KRB5KDC_ERR_C_PRINCIPAL_UNKNOM" porque o usuario não existe no dominio.
+Após realizar a query, notamos que o protocolo responsavel pelo Kerberos é o KRB5 na porta 88 UDP, então ele envia uma flag "AS-REQ" e o servidor responde com "KRB:Error KRB5KDC_ERR_C_PRINCIPAL_UNKNOM" porque o usuario não existe no dominio.
 
 Vamos fazer uma query agora com um usuario valido para verificarmos se o protocolo se comporta de forma diferente.
 Para isso, vou utilizar um usuario padrão que na maioria das vezes fica ativo no dominio, o "administrator".
